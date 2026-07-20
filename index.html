@@ -362,7 +362,8 @@
         function setupFocusChain() {
             for (let i = 0; i < 12; i++) {
                 setupSubmit(document.getElementById(`spd-${i}`), `out-${i}`);
-                setupSubmit(document.getElementById(`out-${i}`), `yld-${i}`);
+                setupSubmit(document.getElementById(`out-${i}`), `log-${i}`);
+                setupSubmit(document.getElementById(`log-${i}`), `yld-${i}`);
                 setupSubmit(document.getElementById(`yld-${i}`), `scr-${i}`);
                 if (i < 11) setupSubmit(document.getElementById(`scr-${i}`), `spd-${i+1}`);
                 else setupSubmit(document.getElementById(`scr-${i}`), "tx-product");
