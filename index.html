@@ -37,7 +37,7 @@
         td { padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center; vertical-align: middle; }
         
         .table-input { width: 90px; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 13px; font-weight: 600; color: #0f172a; font-family: inherit; box-sizing: border-box; }
-        .table-text-area { width: 350px; min-height: 28px; height: 28px; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px; font-weight: 500; color: #334155; box-sizing: border-box; font-family: inherit; resize: none; overflow: hidden; display: block; line-height: 1.4; text-align: left; }
+        .table-text-area { width: 350px; min-height: 28px; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px; font-weight: 500; color: #334155; box-sizing: border-box; font-family: inherit; resize: none; overflow: hidden; display: block; line-height: 1.4; text-align: left; }
         
         .print-shadow-layer { display: none; }
         .oee-badge { font-weight: 700; font-size: 13px; color: #94a3b8; font-family: inherit; }
@@ -93,8 +93,10 @@
             .table-input.yield-input-red { color: #b91c1c !important; }
             .table-input.yield-input-green { color: #166534 !important; }
             .table-text-area { display: none !important; }
+            .print-notes-layer { display: none !important; }
             
             .print-shadow-layer { display: block !important; width: 100% !important; text-align: left !important; font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; font-size: 11px !important; font-weight: 500 !important; color: #334155 !important; line-height: 1.4 !important; white-space: pre-wrap !important; word-wrap: break-word !important; padding: 6px 8px !important; box-sizing: border-box !important; }
+            .print-notes-layer { display: block !important; width: 100% !important; text-align: left !important; font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; font-size: 13px !important; font-weight: 500 !important; color: #0f172a !important; line-height: 1.4 !important; white-space: pre-wrap !important; word-wrap: break-word !important; padding: 6px 0 !important; box-sizing: border-box !important; }
             
             .toggle-btn { display: inline-flex !important; border: 1px solid #cbd5e1 !important; font-size: 12px !important; width: 24px !important; height: 24px !important; border-radius: 50% !important; align-items: center !important; justify-content: center !important; font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; font-weight: 700 !important; }
             .toggle-btn.neutral { color: #94a3b8 !important; background-color: #f1f5f9 !important; border: 1px solid #cbd5e1 !important; }
@@ -127,16 +129,16 @@
 
             <div class="section-panel">
                 <div class="input-group"><label>Product</label><input type="text" id="tx-product" class="form-control" placeholder="Enter product name..." oninput="calculateMetrics()"></div>
-                <div class="input-group"><label>Can Size</label><select id="dr-size" class="form-control" onchange="calculateMetrics()"><option value="">Select package size...</option><option value="0.250">0.250</option><option value="0.330">0.330</option><option value="0.355">0.355</option><option value="0.440">0.440</option><option value="0.500">0.500</select></div>
-                <div class="input-group"><label>Total Plan</label><input type="number" id="tx-plan" class="form-control" inputmode="decimal" placeholder="0" oninput="calculateMetrics()"></div>
-                <div class="input-group"><label>Filler Speed</label><input type="number" id="tx-speed" class="form-control" inputmode="decimal" placeholder="0" oninput="calculateMetrics()"></div>
+                <div class="input-group"><label>Can Size</label><select id="dr-size" class="form-control" onchange="calculateMetrics()"><option value="">Select package size...</option><option value="0.250">0.250</option><option value="0.330">0.330</option><option value="0.355">0.355</option><option value="0.440">0.440</option><option value="0.500">0.500</option></select></div>
+                <div class="input-group"><label>Total Plan</label><input type="text" id="tx-plan" class="form-control" inputmode="numeric" placeholder="0" oninput="calculateMetrics()" onblur="formatNumberField(this)"></div>
+                <div class="input-group"><label>Filler Speed</label><input type="text" id="tx-speed" class="form-control" inputmode="decimal" placeholder="0" oninput="calculateMetrics()" onblur="formatNumberField(this)"></div>
             </div>
             
             <div class="section-panel">
-                <div class="input-group"><label>Upstream Volume (Final Syrup)</label><input type="number" id="tx-uvol" class="form-control" inputmode="decimal" placeholder="0" oninput="calculateMetrics()"></div>
+                <div class="input-group"><label>Upstream Volume (Final Syrup)</label><input type="text" id="tx-uvol" class="form-control" inputmode="decimal" placeholder="0" oninput="calculateMetrics()" onblur="formatNumberField(this)"></div>
                 <div class="input-group"><label>Mixer Volume (ContiFlow KB)</label><input type="number" id="tx-mvol" class="form-control" inputmode="decimal" placeholder="0" oninput="calculateMetrics()"></div>
                 <div class="input-group"><label>Mixing Ratio %</label><input type="number" id="tx-ratio" class="form-control" inputmode="decimal" placeholder="0" oninput="calculateMetrics()"></div>
-                <div class="input-group"><label>Filler Production Counter</label><input type="number" id="tx-counter" class="form-control" inputmode="decimal" placeholder="0" oninput="calculateMetrics()"></div>
+                <div class="input-group"><label>Filler Production Counter</label><input type="text" id="tx-counter" class="form-control" inputmode="numeric" placeholder="0" oninput="calculateMetrics()" onblur="formatNumberField(this)"></div>
                 <div class="input-group"><label>Filler bowl level</label><input type="number" id="tx-bowl" class="form-control" inputmode="decimal" placeholder="0" oninput="calculateMetrics()"></div>
                 <div class="input-group"><label>Cans per layer</label><input type="number" id="tx-layer" class="form-control" inputmode="numeric" placeholder="0" oninput="calculateMetrics()"></div>
                 <div class="input-group"><label>Layers per pallet</label><input type="number" id="tx-pallet" class="form-control" inputmode="numeric" placeholder="0" oninput="calculateMetrics()"></div>
@@ -182,6 +184,12 @@
                     <tbody id="table-body"></tbody>
                 </table>
             </div>
+
+            <div class="card card-blue">
+                <h3>Notes</h3>
+                <textarea id="tx-notes" class="table-text-area" rows="1" style="width: 100%; max-width: 100%; min-height: 60px; font-size: 13px; font-weight: 500; color: #0f172a; text-align: left;" placeholder="Enter production run details, observations, or handover notes... (Enter for new line)" oninput="saveNotes(); autoGrow(this)"></textarea>
+                <div id="print-notes-shadow" class="print-notes-layer">-</div>
+            </div>
         </div>
         
         <div class="footer">Web Page - Created by <strong>Kelvin George Maniclang</strong></div>
@@ -198,9 +206,24 @@
             Morning: Array.from({length: 12}, () => ({ out: "", spd: "", log: "", yld: "", scr: "", q: 0, s: 0 })),
             Night: Array.from({length: 12}, () => ({ out: "", spd: "", log: "", yld: "", scr: "", q: 0, s: 0 }))
         };
+        let notes = { Morning: "", Night: "" };
+
+        function saveNotes() {
+            const el = document.getElementById("tx-notes");
+            if (el) notes[currentShift] = el.value;
+            localStorage.setItem("canning_calc_notes", JSON.stringify(notes));
+            syncNotesShadow();
+        }
+
+        function syncNotesShadow() {
+            const ta = document.getElementById("tx-notes");
+            const div = document.getElementById("print-notes-shadow");
+            if (ta && div) div.innerText = ta.value.trim() || "-";
+        }
 
         function saveToStorage() {
             localStorage.setItem("canning_calc_db", JSON.stringify(db));
+            localStorage.setItem("canning_calc_notes", JSON.stringify(notes));
             localStorage.setItem("canning_calc_shift", currentShift);
             const dateEl = document.getElementById("tx-date");
             if (dateEl) localStorage.setItem("canning_calc_tx-date", dateEl.value);
@@ -215,6 +238,8 @@
         function loadFromStorage() {
             const savedDb = localStorage.getItem("canning_calc_db");
             if (savedDb) db = JSON.parse(savedDb);
+            const savedNotes = localStorage.getItem("canning_calc_notes");
+            if (savedNotes) notes = JSON.parse(savedNotes);
             const savedShift = localStorage.getItem("canning_calc_shift");
             if (savedShift) {
                 currentShift = savedShift;
@@ -240,6 +265,9 @@
                 const el = document.getElementById(id);
                 if (el && val !== null) el.value = val;
             });
+
+            const notesEl = document.getElementById("tx-notes");
+            if (notesEl) notesEl.value = notes[currentShift] || "";
         }
 
         function buildTable() {
@@ -252,13 +280,13 @@
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td style="font-weight: 700; font-size: 13px; white-space: nowrap; color: #334155;">${activeHours[i]}</td>
-                    <td><input type="number" id="spd-${i}" class="table-input" inputmode="decimal" value="${data[i].spd}" placeholder="0" oninput="storeRow(${i})"></td>
-                    <td><input type="number" id="out-${i}" class="table-input" inputmode="decimal" value="${data[i].out}" placeholder="0" oninput="storeRow(${i})"></td>
+                    <td><input type="text" id="spd-${i}" class="table-input" inputmode="numeric" value="${data[i].spd}" placeholder="0" oninput="storeRow(${i})" onblur="formatNumberField(this)"></td>
+                    <td><input type="text" id="out-${i}" class="table-input" inputmode="numeric" value="${data[i].out}" placeholder="0" oninput="storeRow(${i})" onblur="formatNumberField(this)"></td>
                     <td><span id="oee-${i}" class="oee-badge">0.00%</span></td>
                     <td><button id="q-${i}" class="toggle-btn" onclick="toggleState(${i}, 'q')">?</button></td>
                     <td><button id="s-${i}" class="toggle-btn" onclick="toggleState(${i}, 's')">?</button></td>
                     <td>
-                        <textarea id="log-${i}" class="table-text-area" rows="1" placeholder="Type shift delays..." oninput="syncPrintShadow(${i}); autoGrow(this); storeRow(${i})">${data[i].log}</textarea>
+                        <textarea id="log-${i}" class="table-text-area" rows="1" placeholder="Type shift delays... (Enter for new line, Tab for next field)" oninput="syncPrintShadow(${i}); autoGrow(this); storeRow(${i})">${data[i].log}</textarea>
                         <div id="print-shadow-${i}" class="print-shadow-layer">${data[i].log || "-"}</div>
                     </td>
                     <td><input type="text" id="yld-${i}" class="table-input" inputmode="decimal" value="${data[i].yld}" placeholder="0%" onblur="applyYieldColor(${i}, 'yld')" oninput="storeRow(${i})"></td>
@@ -276,13 +304,15 @@
                         if (ta.value) autoGrow(ta);
                         syncPrintShadow(i);
                     }
-                    // Apply colors after table is built
                     applyYieldColor(i, 'yld');
                     applyYieldColor(i, 'scr');
                 }
             }, 50);
 
             setupFocusChain();
+            const notesEl = document.getElementById("tx-notes");
+            if (notesEl) { notesEl.value = notes[currentShift] || ""; autoGrow(notesEl); }
+            syncNotesShadow();
             calculateMetrics();
         }
 
@@ -313,11 +343,9 @@
             
             let val = el.value.replace(/%/g, "").trim();
             
-            // Remove both classes first
             el.classList.remove('yield-input-red', 'yield-input-green');
             
             if (val) {
-                // Ensure value has % sign
                 if (!el.value.includes('%')) {
                     el.value = val + "%";
                 }
@@ -360,21 +388,28 @@
             btn.title = type.toUpperCase() + ": " + (val === 1 ? "Pass" : (val === 2 ? "Issue Logged" : "Not Selected"));
         }
 
+        // Enter advances to the next input field. The Downtime Log textarea is
+        // intentionally excluded so Enter inserts a newline (multi-line entry);
+        // Tab moves forward from the log to the next field.
         function setupFocusChain() {
             for (let i = 0; i < 12; i++) {
                 setupSubmit(document.getElementById(`spd-${i}`), `out-${i}`);
                 setupSubmit(document.getElementById(`out-${i}`), `log-${i}`);
-                setupSubmit(document.getElementById(`log-${i}`), `yld-${i}`);
                 setupSubmit(document.getElementById(`yld-${i}`), `scr-${i}`);
                 if (i < 11) setupSubmit(document.getElementById(`scr-${i}`), `spd-${i+1}`);
                 else setupSubmit(document.getElementById(`scr-${i}`), "tx-product");
+
+                const logEl = document.getElementById(`log-${i}`);
+                if (logEl) {
+                    logEl.addEventListener("focus", function() { autoGrow(this); });
+                }
             }
         }
 
         function setupSubmit(el, nextId) {
             if (!el) return;
-            el.addEventListener("keypress", function(e) {
-                if (e.key === "Enter") { e.preventDefault(); document.getElementById(nextId)?.focus(); }
+            el.addEventListener("keydown", function(e) {
+                if (e.key === "Enter") { e.preventDefault(); const n = document.getElementById(nextId); if (n) n.focus(); }
             });
             el.addEventListener("focus", function() { setTimeout(() => this.select(), 50); });
         }
@@ -403,12 +438,19 @@
         }
 
         function switchShift() {
+            const notesEl = document.getElementById("tx-notes");
+            if (notesEl) notes[currentShift] = notesEl.value;
             currentShift = document.getElementById("dr-shift").value;
             saveToStorage();
             buildTable();
+            const newNotesEl = document.getElementById("tx-notes");
+            if (newNotesEl) { newNotesEl.value = notes[currentShift] || ""; autoGrow(newNotesEl); }
         }
 
         function clearCalculatorInputs() {
+            const confirmed = confirm("WARNING: You are about to clear all Filler Calculator inputs. Do you want to proceed?");
+            if (!confirmed) return;
+
             document.getElementById("tx-product").value = "";
             document.getElementById("dr-size").value = "";
             document.getElementById("tx-plan").value = "";
@@ -424,13 +466,13 @@
             calculateMetrics();
         }
 
-        // FIXED: Embedded native verification popup intercepts data wipes, protecting inputs from accidental touches
         function clearCurrentShift() {
             const confirmed = confirm("WARNING: You are about to completely delete all data entered for this shift. Do you want to proceed?");
-            if (!confirmed) return; // Immediate hard break blocks the accidental data wipe
+            if (!confirmed) return;
             
             anchors[currentShift] = new Date();
             db[currentShift] = Array.from({length: 12}, () => ({ out: "", spd: "", log: "", yld: "", scr: "", q: 0, s: 0 }));
+            notes[currentShift] = "";
             saveToStorage();
             buildTable();
         }
@@ -440,16 +482,16 @@
             const lblProd = document.getElementById("lbl-product");
             if (lblProd) lblProd.innerHTML = pName || "-";
             
-            const sz = parseFloat(document.getElementById("dr-size").value) || 0;
-            const pl = parseFloat(document.getElementById("tx-plan").value) || 0;
-            const sp = parseFloat(document.getElementById("tx-speed").value) || 0;
-            const uv = parseFloat(document.getElementById("tx-uvol").value) || 0;
-            const mv = parseFloat(document.getElementById("tx-mvol").value) || 0;
-            const rt = parseFloat(document.getElementById("tx-ratio").value) || 0;
-            const cnt = parseFloat(document.getElementById("tx-counter").value) || 0;
-            const fb = parseFloat(document.getElementById("tx-bowl").value) || 0;
-            const cl = parseFloat(document.getElementById("tx-layer").value) || 0;
-            const lp = parseFloat(document.getElementById("tx-pallet").value) || 0;
+            const sz = parseNum(document.getElementById("dr-size").value);
+            const pl = parseNum(document.getElementById("tx-plan").value);
+            const sp = parseNum(document.getElementById("tx-speed").value);
+            const uv = parseNum(document.getElementById("tx-uvol").value);
+            const mv = parseNum(document.getElementById("tx-mvol").value);
+            const rt = parseNum(document.getElementById("tx-ratio").value);
+            const cnt = parseNum(document.getElementById("tx-counter").value);
+            const fb = parseNum(document.getElementById("tx-bowl").value);
+            const cl = parseNum(document.getElementById("tx-layer").value);
+            const lp = parseNum(document.getElementById("tx-pallet").value);
 
             if (sz > 0 && pl > 0) {
                 const rem = ((uv + 110.0) / (rt / 100.0 > 0 ? rt / 100.0 : 0.10) + mv + fb) / sz;
@@ -494,8 +536,8 @@
             }
 
             for (let i = 0; i < 12; i++) {
-                const rowOut = parseFloat(db[currentShift][i].out) || 0;
-                const rowSpd = parseFloat(db[currentShift][i].spd) || 0;
+                const rowOut = parseNum(db[currentShift][i].out);
+                const rowSpd = parseNum(db[currentShift][i].spd);
                 const oeeEl = document.getElementById(`oee-${i}`);
                 if (oeeEl) {
                     if (rowOut > 0 && rowSpd > 0) {
@@ -508,9 +550,41 @@
             saveToStorage();
         }
 
+        function parseNum(val) {
+            return parseFloat(String(val || "").replace(/,/g, "")) || 0;
+        }
+
+        function formatNumberField(el) {
+            const raw = el.value.replace(/,/g, "").trim();
+            if (raw === "" || isNaN(parseFloat(raw))) { return; }
+            const parts = raw.split(".");
+            const intPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            el.value = parts.length > 1 ? intPart + "." + parts[1] : intPart;
+            if (el.id.startsWith("spd-") || el.id.startsWith("out-")) {
+                const i = parseInt(el.id.split("-")[1], 10);
+                storeRow(i);
+            } else {
+                calculateMetrics();
+            }
+        }
+
+        function setupCalculatorFocusChain() {
+            const order = ["tx-product", "dr-size", "tx-plan", "tx-speed", "tx-uvol", "tx-mvol", "tx-ratio", "tx-counter", "tx-bowl", "tx-layer", "tx-pallet"];
+            order.forEach((id, idx) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const nextId = idx < order.length - 1 ? order[idx + 1] : "tx-product";
+                el.addEventListener("keydown", function(e) {
+                    if (e.key === "Enter") { e.preventDefault(); const n = document.getElementById(nextId); if (n) n.focus(); }
+                });
+                el.addEventListener("focus", function() { setTimeout(() => this.select(), 50); });
+            });
+        }
+
         window.onload = function() {
             loadFromStorage();
             buildTable();
+            setupCalculatorFocusChain();
         };
     </script>
 </body>
