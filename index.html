@@ -261,7 +261,7 @@
                         <textarea id="log-${i}" class="table-text-area" rows="1" placeholder="Type shift delays..." oninput="syncPrintShadow(${i}); autoGrow(this); storeRow(${i})">${data[i].log}</textarea>
                         <div id="print-shadow-${i}" class="print-shadow-layer">${data[i].log || "-"}</div>
                     </td>
-                    <td><input type="text" id="yld-${i}" class="table-input" inputmode="numeric" value="${data[i].yld}" placeholder="0%" onblur="applyYieldColor(${i}, 'yld')" oninput="storeRow(${i})"></td>
+                    <td><input type="text" id="yld-${i}" class="table-input" inputmode="decimal" value="${data[i].yld}" placeholder="0%" onblur="applyYieldColor(${i}, 'yld')" oninput="storeRow(${i})"></td>
                     <td><input type="text" id="scr-${i}" class="table-input" inputmode="decimal" value="${data[i].scr}" placeholder="0%" onblur="applyYieldColor(${i}, 'scr')" oninput="storeRow(${i})"></td>
                 `;
                 body.appendChild(tr);
