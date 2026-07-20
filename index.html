@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRODUCTION HUB MASTER CONSOLE</title>
+    <link rel="preconnect" href="https://googleapis.com">
+    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        
+        body { font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: #f8fafc; color: #1e293b; -webkit-font-smoothing: antialiased; }
+        .app-bar { background-color: #0d47a1; color: white; padding: 15px; font-size: 16px; font-weight: 700; text-align: center; letter-spacing: 0.5px; text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .tab-container { display: flex; justify-content: center; background-color: #e2e8f0; padding: 8px; gap: 10px; }
+        .tab-btn { background-color: #f1f5f9; border: none; padding: 10px 20px; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; color: #334155; transition: all 0.2s; font-family: inherit; }
+        .tab-btn.active { background-color: #0d47a1; color: white; }
+        .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; box-sizing: border-box; }
+        
+        .card { border-radius: 8px; padding: 15px; margin-bottom: 15px; border: 1px solid #cbd5e1; box-sizing: border-box; }
+        .card-blue { background-color: #eff6ff; border-color: #bfdbfe; color: #1e40af; }
+        .card-green { background-color: #f0fdf4; border-color: #bbf7d0; color: #166534; }
+        .card-teal { background-color: #f0fdfa; border-color: #99f6e4; color: #115e59; }
+        .card h3 { margin-top: 0; margin-bottom: 12px; border-bottom: 1px solid currentColor; padding-bottom: 6px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; }
+        .card-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; font-weight: 500; align-items: center; }
+        .card-value { font-weight: bold; font-size: 14px; }
+        
+        .section-panel { background-color: #f1f5f9; padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+        .input-group { display: flex; flex-direction: column; width: 100%; max-width: 300px; gap: 4px; }
+        .input-group label { font-size: 11px; font-weight: 700; color: #1e3a8a; text-transform: uppercase; letter-spacing: 0.3px; }
+        .form-control { width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; font-weight: 600; color: #0f172a; box-sizing: border-box; font-family: inherit; }
+        .form-control:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37,99,235,0.2); }
+        
+        .table-wrapper { width: 100%; overflow-x: auto; background-color: white; border-radius: 8px; border: 1px solid #cbd5e1; }
+        table { width: 100%; border-collapse: collapse; min-width: 1150px; }
+        th { background-color: #f1f5f9; color: #0d47a1; padding: 12px 8px; font-size: 11px; font-weight: 700; text-align: center; border-bottom: 2px solid #0d47a1; letter-spacing: 0.3px; text-transform: uppercase; }
+        td { padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center; vertical-align: middle; }
+        
+        .table-input { width: 90px; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 13px; font-weight: 600; color: #0f172a; font-family: inherit; box-sizing: border-box; }
+        .table-text-area { width: 350px; min-height: 28px; height: 28px; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px; font-weight: 500; color: #334155; box-sizing: border-box; font-family: inherit; resize: none; overflow: hidden; display: block; line-height: 1.4; text-align: left; }
+        
+        .print-shadow-layer { display: none; }
+        .oee-badge { font-weight: 700; font-size: 13px; color: #94a3b8; font-family: inherit; }
+        
+        .toggle-btn { background: none; border: none; font-size: 12px; cursor: pointer; padding: 0; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; transition: all 0.15s; font-family: inherit; }
+        .toggle-btn.neutral { color: #94a3b8; background-color: #f1f5f9; border: 1px solid #cbd5e1; }
+        .toggle-btn.pass { color: white; background-color: #166534; border: 1px solid #166534; }
+        .toggle-btn.issue { color: white; background-color: #b91c1c; border: 1px solid #b91c1c; }
+        
+        .footer { text-align: center; padding: 20px; color: #64748b; font-size: 11px; font-weight: 500; letter-spacing: 0.2px; }
+        .footer strong { color: #0d47a1; font-style: italic; font-weight: 700; }
+        .yield-red { color: #b91c1c !important; font-weight: 700; }
+        .yield-green { color: #166534 !important; font-weight: 700; }
+        
+        .yield-input-red { color: #b91c1c !important; font-weight: 700 !important; }
+        .yield-input-green { color: #166534 !important; font-weight: 700 !important; }
+
+        @media print {
+            @page { size: landscape; margin: 0.4in; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            html, body { background-color: white !important; color: black !important; }
+            body { font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; margin: 0 !important; padding: 0 !important; -webkit-font-smoothing: antialiased !important; }
+            .app-bar, .tab-container, .tab-btn, select, button.tab-btn, .footer { display: none !important; }
+            .container { max-width: 100% !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
+            
+            .card { border: 1px solid #cbd5e1 !important; margin-bottom: 12px !important; padding: 12px !important; page-break-inside: avoid !important; background-color: white !important; }
+            .card-blue { background-color: #eff6ff !important; color: #1e40af !important; }
+            .card-green { background-color: #f0fdf4 !important; color: #166534 !important; }
+            .card-teal { background-color: #f0fdfa !important; color: #115e59 !important; }
+            .card h3 { font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; font-weight: 700 !important; font-size: 14px !important; margin: 0 0 12px 0 !important; border-bottom: 1px solid currentColor !important; padding-bottom: 6px !important; text-transform: uppercase !important; letter-spacing: 0.3px !important; }
+            .card-row { display: flex !important; justify-content: space-between !important; margin-bottom: 8px !important; font-size: 13px !important; font-weight: 500 !important; align-items: center !important; }
+            .card-value { font-weight: bold !important; font-size: 14px !important; }
+            .card-date-input { border: none !important; background: transparent !important; font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; font-size: 13px !important; font-weight: 700 !important; color: #1e40af !important; width: auto !important; }
+            
+            .table-wrapper { border: none !important; overflow: visible !important; width: 100% !important; background-color: white !important; }
+            table { width: 100% !important; border-collapse: collapse !important; table-layout: fixed !important; page-break-inside: auto !important; }
+            tr { page-break-inside: avoid !important; page-break-after: auto !important; }
+            
+            th:nth-child(1), td:nth-child(1) { width: 110px !important; text-align: left !important; }
+            th:nth-child(2), td:nth-child(2) { width: 95px !important; }
+            th:nth-child(3), td:nth-child(3) { width: 105px !important; }
+            th:nth-child(4), td:nth-child(4) { width: 75px !important; }
+            th:nth-child(5), td:nth-child(5) { width: 65px !important; }
+            th:nth-child(6), td:nth-child(6) { width: 65px !important; }
+            th:nth-child(7), td:nth-child(7) { width: 340px !important; }
+            th:nth-child(8), td:nth-child(8) { width: 95px !important; }
+            th:nth-child(9), td:nth-child(9) { width: 85px !important; }
+            
+            th { background-color: #f1f5f9 !important; color: #0d47a1 !important; padding: 12px 8px !important; font-size: 11px !important; font-weight: 700 !important; text-align: center !important; border-bottom: 2px solid #0d47a1 !important; letter-spacing: 0.3px !important; text-transform: uppercase !important; font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; }
+            td { padding: 6px 8px !important; border-bottom: 1px solid #e2e8f0 !important; text-align: center !important; vertical-align: middle !important; font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; font-size: 13px !important; font-weight: 500 !important; color: #0f172a !important; }
+            
+            .table-input { border: none !important; background: transparent !important; font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; font-size: 13px !important; font-weight: 600 !important; color: #0f172a !important; width: 100% !important; text-align: center !important; padding: 6px 8px !important; }
+            .table-input.yield-input-red { color: #b91c1c !important; }
+            .table-input.yield-input-green { color: #166534 !important; }
+            .table-text-area { display: none !important; }
+            
+            .print-shadow-layer { display: block !important; width: 100% !important; text-align: left !important; font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; font-size: 11px !important; font-weight: 500 !important; color: #334155 !important; line-height: 1.4 !important; white-space: pre-wrap !important; word-wrap: break-word !important; padding: 6px 8px !important; box-sizing: border-box !important; }
+            
+            .toggle-btn { display: inline-flex !important; border: 1px solid #cbd5e1 !important; font-size: 12px !important; width: 24px !important; height: 24px !important; border-radius: 50% !important; align-items: center !important; justify-content: center !important; font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; font-weight: 700 !important; }
+            .toggle-btn.neutral { color: #94a3b8 !important; background-color: #f1f5f9 !important; border: 1px solid #cbd5e1 !important; }
+            .toggle-btn.pass { color: white !important; background-color: #166534 !important; border: 1px solid #166534 !important; }
+            .toggle-btn.issue { color: white !important; background-color: #b91c1c !important; border: 1px solid #b91c1c !important; }
+            
+            .oee-badge { font-weight: 700 !important; font-size: 13px !important; font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; color: #94a3b8 !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-bar">Free-Flow Manufacturing Dashboard</div>
+    
+    <div class="tab-container">
+        <button class="tab-btn active" id="btn-calc" onclick="switchView(true)">Filler Calculator</button>
+        <button class="tab-btn" id="btn-oee" onclick="switchView(false)">Line Hourly Monitoring</button>
+    </div>
+
+    <div class="container">
+        <!-- Line Calculator Panel View -->
+        <div id="view-calculator">
+            <div class="card card-green">
+                <h3>Production Summary</h3>
+                <div class="card-row"><span>Product:</span><span id="lbl-product" class="card-value">-</span></div>
+                <div class="card-row"><span>Running Yield:</span><span id="lbl-yield" class="card-value yield-red">0.00%</span></div>
+                <div class="card-row"><span>Estimated Final Count:</span><span id="lbl-final-count" class="card-value">0</span></div>
+                <div class="card-row"><span>Estimated Finish Time:</span><span id="lbl-finish-time" class="card-value">00:00:00</span></div>
+            </div>
+
+            <div class="section-panel">
+                <div class="input-group"><label>Product</label><input type="text" id="tx-product" class="form-control" placeholder="Enter product name..." oninput="calculateMetrics()"></div>
+                <div class="input-group"><label>Can Size</label><select id="dr-size" class="form-control" onchange="calculateMetrics()"><option value="">Select package size...</option><option value="0.250">0.250</option><option value="0.330">0.330</option><option value="0.355">0.355</option><option value="0.440">0.440</option><option value="0.500">0.500</select></div>
+                <div class="input-group"><label>Total Plan</label><input type="number" id="tx-plan" class="form-control" placeholder="0" oninput="calculateMetrics()"></div>
+                <div class="input-group"><label>Filler Speed</label><input type="number" id="tx-speed" class="form-control" placeholder="0" oninput="calculateMetrics()"></div>
+            </div>
+            
+            <div class="section-panel">
+                <div class="input-group"><label>Upstream Volume (Final Syrup)</label><input type="number" id="tx-uvol" class="form-control" placeholder="0" oninput="calculateMetrics()"></div>
+                <div class="input-group"><label>Mixer Volume (ContiFlow KB)</label><input type="number" id="tx-mvol" class="form-control" placeholder="0" oninput="calculateMetrics()"></div>
+                <div class="input-group"><label>Mixing Ratio %</label><input type="number" id="tx-ratio" class="form-control" placeholder="0" oninput="calculateMetrics()"></div>
+                <div class="input-group"><label>Filler Production Counter</label><input type="number" id="tx-counter" class="form-control" placeholder="0" oninput="calculateMetrics()"></div>
+                <div class="input-group"><label>Filler bowl level</label><input type="number" id="tx-bowl" class="form-control" placeholder="0" oninput="calculateMetrics()"></div>
+                <div class="input-group"><label>Cans per layer</label><input type="number" id="tx-layer" class="form-control" placeholder="0" oninput="calculateMetrics()"></div>
+                <div class="input-group"><label>Layers per pallet</label><input type="number" id="tx-pallet" class="form-control" placeholder="0" oninput="calculateMetrics()"></div>
+            </div>
+
+            <div class="card card-teal">
+                <h3>End Production</h3>
+                <div class="card-row"><span>Remaining cans to be produce:</span><span id="lbl-remaining" class="card-value">0</span></div>
+                <div class="card-row"><span>Estimated layers left (-7):</span><span id="lbl-depal" class="card-value">0.0</span></div>
+                <div class="card-row"><span>Estimated Pallets Left:</span><span id="lbl-pallets-left" class="card-value">0.0</span></div>
+            </div>
+        </div>
+
+        <!-- Hourly OEE Panel View -->
+        <div id="view-tracker" style="display: none;">
+            <div class="card card-blue">
+                <h3>Free-Flow Performance Board</h3>
+                <div class="card-row"><input type="date" id="tx-date" class="card-date-input" onchange="saveToStorage()"></div>
+            </div>
+
+            <div style="display: flex; justify-content: center; gap: 12px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
+                <select id="dr-shift" class="form-control" style="max-width: 160px; margin: 0;" onchange="switchShift()"><option value="Morning">Morning Shift</option><option value="Night">Night Shift</option></select>
+                <button class="tab-btn" style="background-color: #0d47a1; color: white;" onclick="window.print()">Print / Export Report</button>
+                <button class="tab-btn" style="background-color: #b91c1c; color: white;" onclick="clearCurrentShift()">Clear Shift Data</button>
+            </div>
+            
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 120px;">TIME INTERVAL</th>
+                            <th style="width: 110px;">RATED SPEED</th>
+                            <th style="width: 110px;">ACTUAL OUTPUT</th>
+                            <th style="width: 80px;">OEE %</th>
+                            <th style="width: 70px;">QUALITY</th>
+                            <th style="width: 70px;">SAFETY</th>
+                            <th style="width: 380px;">DOWNTIME LOG</th>
+                            <th style="width: 110px;">FILLER YIELD</th>
+                            <th style="width: 110px;">SCRAP</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body"></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="footer">Web Page - Created by <strong>Kelvin George Maniclang</strong></div>
+    </div>
+
+    <script>
+        let currentShift = "Morning";
+        let anchors = { Morning: new Date(), Night: new Date() };
+        
+        const mHours = ["06:00 - 07:00", "07:00 - 08:00", "08:00 - 09:00", "09:00 - 10:00", "10:00 - 11:00", "11:00 - 12:00", "12:00 - 13:00", "13:00 - 14:00", "14:00 - 15:00", "15:00 - 16:00", "16:00 - 17:00", "17:00 - 18:00"];
+        const nHours = ["18:00 - 19:00", "19:00 - 20:00", "20:00 - 21:00", "21:00 - 22:00", "22:00 - 23:00", "23:00 - 00:00", "00:00 - 01:00", "01:00 - 02:00", "02:00 - 03:00", "03:00 - 04:00", "04:00 - 05:00", "05:00 - 06:00"];
+
+        let db = {
+            Morning: Array.from({length: 12}, () => ({ out: "", spd: "", log: "", yld: "", scr: "", q: 0, s: 0 })),
+            Night: Array.from({length: 12}, () => ({ out: "", spd: "", log: "", yld: "", scr: "", q: 0, s: 0 }))
+        };
+
+        function saveToStorage() {
+            localStorage.setItem("canning_calc_db", JSON.stringify(db));
+            localStorage.setItem("canning_calc_shift", currentShift);
+            const dateEl = document.getElementById("tx-date");
+            if (dateEl) localStorage.setItem("canning_calc_tx-date", dateEl.value);
+
+            const calcInputs = ["tx-product", "dr-size", "tx-plan", "tx-speed", "tx-uvol", "tx-mvol", "tx-ratio", "tx-counter", "tx-bowl", "tx-layer", "tx-pallet"];
+            calcInputs.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) localStorage.setItem("canning_calc_" + id, el.value);
+            });
+        }
+
+        function loadFromStorage() {
+            const savedDb = localStorage.getItem("canning_calc_db");
+            if (savedDb) db = JSON.parse(savedDb);
+            const savedShift = localStorage.getItem("canning_calc_shift");
+            if (savedShift) {
+                currentShift = savedShift;
+                document.getElementById("dr-shift").value = currentShift;
+            }
+            
+            const savedDate = localStorage.getItem("canning_calc_tx-date");
+            const dateEl = document.getElementById("tx-date");
+            if (dateEl) {
+                if (savedDate) dateEl.value = savedDate;
+                else {
+                    const today = new Date();
+                    const yyyy = today.getFullYear();
+                    const mm = String(today.getMonth() + 1).padStart(2, '0');
+                    const dd = String(today.getDate()).padStart(2, '0');
+                    dateEl.value = `${yyyy}-${mm}-${dd}`;
+                }
+            }
+
+            const calcInputs = ["tx-product", "dr-size", "tx-plan", "tx-speed", "tx-uvol", "tx-mvol", "tx-ratio", "tx-counter", "tx-bowl", "tx-layer", "tx-pallet"];
+            calcInputs.forEach(id => {
+                const val = localStorage.getItem("canning_calc_" + id);
+                const el = document.getElementById(id);
+                if (el && val !== null) el.value = val;
+            });
+        }
+
+        function buildTable() {
+            const body = document.getElementById("table-body");
+            body.innerHTML = "";
+            const activeHours = currentShift === "Morning" ? mHours : nHours;
+            const data = db[currentShift];
+
+            for (let i = 0; i < 12; i++) {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td style="font-weight: 700; font-size: 13px; white-space: nowrap; color: #334155;">${activeHours[i]}</td>
+                    <td><input type="number" id="spd-${i}" class="table-input" value="${data[i].spd}" placeholder="0" oninput="storeRow(${i})"></td>
+                    <td><input type="number" id="out-${i}" class="table-input" value="${data[i].out}" placeholder="0" oninput="storeRow(${i})"></td>
+                    <td><span id="oee-${i}" class="oee-badge">0.00%</span></td>
+                    <td><button id="q-${i}" class="toggle-btn" onclick="toggleState(${i}, 'q')">?</button></td>
+                    <td><button id="s-${i}" class="toggle-btn" onclick="toggleState(${i}, 's')">?</button></td>
+                    <td>
+                        <textarea id="log-${i}" class="table-text-area" rows="1" placeholder="Type shift delays..." oninput="syncPrintShadow(${i}); autoGrow(this); storeRow(${i})">${data[i].log}</textarea>
+                        <div id="print-shadow-${i}" class="print-shadow-layer">${data[i].log || "-"}</div>
+                    </td>
+                    <td><input type="text" id="yld-${i}" class="table-input" value="${data[i].yld}" placeholder="0%" onblur="applyYieldColor(${i}, 'yld')" oninput="storeRow(${i})"></td>
+                    <td><input type="text" id="scr-${i}" class="table-input" value="${data[i].scr}" placeholder="0%" onblur="applyYieldColor(${i}, 'scr')" oninput="storeRow(${i})"></td>
+                `;
+                body.appendChild(tr);
+                updateToggleUI(i, 'q'); 
+                updateToggleUI(i, 's');
+            }
+            
+            setTimeout(() => {
+                for (let i = 0; i < 12; i++) {
+                    const ta = document.getElementById(`log-${i}`);
+                    if (ta) {
+                        if (ta.value) autoGrow(ta);
+                        syncPrintShadow(i);
+                    }
+                    // Apply colors after table is built
+                    applyYieldColor(i, 'yld');
+                    applyYieldColor(i, 'scr');
+                }
+            }, 50);
+
+            setupFocusChain();
+            calculateMetrics();
+        }
+
+        function syncPrintShadow(i) {
+            const ta = document.getElementById(`log-${i}`);
+            const div = document.getElementById(`print-shadow-${i}`);
+            if (ta && div) div.innerText = ta.value.trim() || "-";
+        }
+
+        function autoGrow(element) {
+            element.style.height = "28px";
+            element.style.height = (element.scrollHeight) + "px";
+        }
+
+        function storeRow(i) {
+            db[currentShift][i].spd = document.getElementById(`spd-${i}`).value;
+            db[currentShift][i].out = document.getElementById(`out-${i}`).value;
+            db[currentShift][i].log = document.getElementById(`log-${i}`).value;
+            db[currentShift][i].yld = document.getElementById(`yld-${i}`).value;
+            db[currentShift][i].scr = document.getElementById(`scr-${i}`).value;
+            saveToStorage();
+            calculateMetrics();
+        }
+
+        function applyYieldColor(i, field) {
+            const el = document.getElementById(`${field}-${i}`);
+            if (!el) return;
+            
+            let val = el.value.replace(/%/g, "").trim();
+            
+            // Remove both classes first
+            el.classList.remove('yield-input-red', 'yield-input-green');
+            
+            if (val) {
+                // Ensure value has % sign
+                if (!el.value.includes('%')) {
+                    el.value = val + "%";
+                }
+                
+                if (field === 'yld') {
+                    const num = parseFloat(val) || 0;
+                    if (num < 97.0) {
+                        el.classList.add('yield-input-red');
+                    } else {
+                        el.classList.add('yield-input-green');
+                    }
+                }
+            } else {
+                el.classList.remove('yield-input-red', 'yield-input-green');
+            }
+            
+            db[currentShift][i][field] = el.value;
+            saveToStorage();
+        }
+
+        function toggleState(i, type) {
+            db[currentShift][i][type] = (db[currentShift][i][type] + 1) % 3;
+            updateToggleUI(i, type);
+            saveToStorage();
+        }
+
+        function updateToggleUI(i, type) {
+            const btn = document.getElementById(`${type}-${i}`);
+            const val = db[currentShift][i][type];
+            if (val === 1) {
+                btn.className = "toggle-btn pass";
+                btn.innerHTML = "✔";
+            } else if (val === 2) {
+                btn.className = "toggle-btn issue";
+                btn.innerHTML = "✖";
+            } else {
+                btn.className = "toggle-btn neutral";
+                btn.innerHTML = "?";
+            }
+            btn.title = type.toUpperCase() + ": " + (val === 1 ? "Pass" : (val === 2 ? "Issue Logged" : "Not Selected"));
+        }
+
+        function setupFocusChain() {
+            for (let i = 0; i < 12; i++) {
+                setupSubmit(document.getElementById(`spd-${i}`), `out-${i}`);
+                setupSubmit(document.getElementById(`out-${i}`), `yld-${i}`);
+                setupSubmit(document.getElementById(`yld-${i}`), `scr-${i}`);
+                if (i < 11) setupSubmit(document.getElementById(`scr-${i}`), `spd-${i+1}`);
+                else setupSubmit(document.getElementById(`scr-${i}`), "tx-product");
+            }
+        }
+
+        function setupSubmit(el, nextId) {
+            if (!el) return;
+            el.addEventListener("keypress", function(e) {
+                if (e.key === "Enter") { e.preventDefault(); document.getElementById(nextId)?.focus(); }
+            });
+            el.addEventListener("focus", function() { setTimeout(() => this.select(), 50); });
+        }
+
+        function switchView(isCalc) {
+            document.getElementById("view-calculator").style.display = isCalc ? "block" : "none";
+            document.getElementById("view-tracker").style.display = isCalc ? "none" : "block";
+            document.getElementById("btn-calc").className = "tab-btn " + (isCalc ? "active" : "");
+            document.getElementById("btn-oee").className = "tab-btn " + (!isCalc ? "active" : "");
+            saveToStorage();
+            calculateMetrics();
+            
+            if (!isCalc) {
+                setTimeout(() => {
+                    for (let i = 0; i < 12; i++) {
+                        const ta = document.getElementById(`log-${i}`);
+                        if (ta) {
+                            if (ta.value) autoGrow(ta);
+                            syncPrintShadow(i);
+                        }
+                        applyYieldColor(i, 'yld');
+                        applyYieldColor(i, 'scr');
+                    }
+                }, 50);
+            }
+        }
+
+        function switchShift() {
+            currentShift = document.getElementById("dr-shift").value;
+            saveToStorage();
+            buildTable();
+        }
+
+        // FIXED: Embedded native verification popup intercepts data wipes, protecting inputs from accidental touches
+        function clearCurrentShift() {
+            const confirmed = confirm("WARNING: You are about to completely delete all data entered for this shift. Do you want to proceed?");
+            if (!confirmed) return; // Immediate hard break blocks the accidental data wipe
+            
+            anchors[currentShift] = new Date();
+            db[currentShift] = Array.from({length: 12}, () => ({ out: "", spd: "", log: "", yld: "", scr: "", q: 0, s: 0 }));
+            saveToStorage();
+            buildTable();
+        }
+
+        function calculateMetrics() {
+            const pName = document.getElementById("tx-product").value.trim();
+            const lblProd = document.getElementById("lbl-product");
+            if (lblProd) lblProd.innerHTML = pName || "-";
+            
+            const sz = parseFloat(document.getElementById("dr-size").value) || 0;
+            const pl = parseFloat(document.getElementById("tx-plan").value) || 0;
+            const sp = parseFloat(document.getElementById("tx-speed").value) || 0;
+            const uv = parseFloat(document.getElementById("tx-uvol").value) || 0;
+            const mv = parseFloat(document.getElementById("tx-mvol").value) || 0;
+            const rt = parseFloat(document.getElementById("tx-ratio").value) || 0;
+            const cnt = parseFloat(document.getElementById("tx-counter").value) || 0;
+            const fb = parseFloat(document.getElementById("tx-bowl").value) || 0;
+            const cl = parseFloat(document.getElementById("tx-layer").value) || 0;
+            const lp = parseFloat(document.getElementById("tx-pallet").value) || 0;
+
+            if (sz > 0 && pl > 0) {
+                const rem = ((uv + 110.0) / (rt / 100.0 > 0 ? rt / 100.0 : 0.10) + mv + fb) / sz;
+                document.getElementById("lbl-remaining").innerHTML = Math.round(rem).toLocaleString();
+                
+                const finalCountEl = document.getElementById("lbl-final-count");
+                if (finalCountEl) finalCountEl.innerHTML = Math.round(cnt + rem).toLocaleString();
+                
+                const yPct = ((cnt + rem) / pl) * 100;
+                const yLbl = document.getElementById("lbl-yield");
+                if (yLbl) {
+                    yLbl.innerHTML = yPct.toFixed(2) + "%";
+                    yLbl.className = "card-value " + (yPct >= 97 ? "yield-green" : "yield-red");
+                }
+                
+                const dp = Math.max(0, (rem / cl) - 7);
+                document.getElementById("lbl-depal").innerHTML = dp.toFixed(1);
+                document.getElementById("lbl-pallets-left").innerHTML = lp > 0 ? (dp / lp).toFixed(1) : "0.0";
+                
+                if (rem > 0 && sp > 0) {
+                    const totalSecondsToAdd = (rem / sp) * 3600;
+                    const calculatedFinishDate = new Date(anchors[currentShift].getTime() + (totalSecondsToAdd * 1000));
+                    
+                    const pad = (num) => String(num).padStart(2, '0');
+                    const hh = pad(calculatedFinishDate.getHours());
+                    const mm = pad(calculatedFinishDate.getMinutes());
+                    const ss = pad(calculatedFinishDate.getSeconds());
+                    
+                    const finishTimeEl = document.getElementById("lbl-finish-time");
+                    if (finishTimeEl) finishTimeEl.innerHTML = `${hh}:${mm}:${ss}`;
+                } else { if (document.getElementById("lbl-finish-time")) document.getElementById("lbl-finish-time").innerHTML = "00:00:00"; }
+            } else {
+                document.getElementById("lbl-remaining").innerHTML = "0";
+                if (document.getElementById("lbl-final-count")) document.getElementById("lbl-final-count").innerHTML = "0";
+                if (document.getElementById("lbl-yield")) {
+                    document.getElementById("lbl-yield").innerHTML = "0.00%";
+                    document.getElementById("lbl-yield").className = "card-value yield-red";
+                }
+                document.getElementById("lbl-depal").innerHTML = "0.0";
+                document.getElementById("lbl-pallets-left").innerHTML = "0.0";
+                if (document.getElementById("lbl-finish-time")) document.getElementById("lbl-finish-time").innerHTML = "00:00:00";
+            }
+
+            for (let i = 0; i < 12; i++) {
+                const rowOut = parseFloat(db[currentShift][i].out) || 0;
+                const rowSpd = parseFloat(db[currentShift][i].spd) || 0;
+                const oeeEl = document.getElementById(`oee-${i}`);
+                if (oeeEl) {
+                    if (rowOut > 0 && rowSpd > 0) {
+                        const oee = (rowOut / rowSpd) * 100;
+                        oeeEl.innerHTML = oee.toFixed(2) + "%";
+                        oeeEl.style.color = oee >= 70 ? "#166534" : "#b91c1c";
+                    } else { oeeEl.innerHTML = "0.00%"; oeeEl.style.color = "#94a3b8"; }
+                }
+            }
+            saveToStorage();
+        }
+
+        window.onload = function() {
+            loadFromStorage();
+            buildTable();
+        };
+    </script>
+</body>
+</html>
