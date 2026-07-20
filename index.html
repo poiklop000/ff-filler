@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRODUCTION HUB MASTER CONSOLE</title>
+    <title>SHIFT MANAGER HUB MASTER CONSOLE</title>
     <link rel="preconnect" href="https://googleapis.com">
     <link rel="preconnect" href="https://gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -171,7 +171,7 @@
                 <h3>End Production</h3>
                 <div class="card-row"><span>Remaining cans to be produce:</span><span id="lbl-remaining" class="card-value">0</span></div>
                 <div class="card-row"><span>Estimated layers left (-7):</span><span id="lbl-depal" class="card-value">0.0</span></div>
-                <div class="card-row"><span>Estimated Pallets Left:</span><span id="lbl-pallets-left" class="card-value">0.0</span></div>
+                <div class="card-row"><span>Estimated pallets left:</span><span id="lbl-pallets-left" class="card-value">0.0</span></div>
             </div>
         </div>
 
@@ -198,7 +198,7 @@
                             <th style="width: 80px;">OEE %</th>
                             <th style="width: 70px;">QUALITY</th>
                             <th style="width: 70px;">SAFETY</th>
-                            <th style="width: 380px;">DOWNTIME LOG</th>
+                            <th style="width: 380px;">DOWNTIME LOGS</th>
                             <th style="width: 110px;">FILLER YIELD</th>
                             <th style="width: 110px;">SCRAP</th>
                         </tr>
@@ -215,7 +215,7 @@
             </div>
         </div>
         
-        <div class="footer">Web Page - Created by <strong>Kelvin George Maniclang</strong></div>
+        <div class="footer">Shift Manager Console v1.00 - Created by <strong>Kelvin George</strong></div>
     </div>
 
     <script>
@@ -305,15 +305,15 @@
                     <td style="font-weight: 700; font-size: 13px; white-space: nowrap; color: #334155;">${activeHours[i]}</td>
                     <td><input type="text" id="spd-${i}" class="table-input" inputmode="numeric" value="${data[i].spd}" placeholder="0" oninput="storeRow(${i})" onblur="formatNumberField(this)"></td>
                     <td><input type="text" id="out-${i}" class="table-input" inputmode="numeric" value="${data[i].out}" placeholder="0" oninput="storeRow(${i})" onblur="formatNumberField(this)"></td>
-                    <td><span id="oee-${i}" class="oee-badge">0.00%</span></td>
+                    <td><span id="oee-${i}" class="oee-badge">0.0%</span></td>
                     <td><button id="q-${i}" class="toggle-btn" onclick="toggleState(${i}, 'q')">?</button></td>
                     <td><button id="s-${i}" class="toggle-btn" onclick="toggleState(${i}, 's')">?</button></td>
                     <td>
                         <textarea id="log-${i}" class="table-text-area" rows="1" placeholder="Type shift delays... (Enter for new line, Tab for next field)" oninput="syncPrintShadow(${i}); autoGrow(this); storeRow(${i})">${data[i].log}</textarea>
                         <div id="print-shadow-${i}" class="print-shadow-layer">${data[i].log || "-"}</div>
                     </td>
-                    <td><input type="text" id="yld-${i}" class="table-input" inputmode="decimal" value="${data[i].yld}" placeholder="0%" onblur="applyYieldColor(${i}, 'yld')" oninput="storeRow(${i})"></td>
-                    <td><input type="text" id="scr-${i}" class="table-input" inputmode="decimal" value="${data[i].scr}" placeholder="0%" onblur="applyYieldColor(${i}, 'scr')" oninput="storeRow(${i})"></td>
+                    <td><input type="text" id="yld-${i}" class="table-input" inputmode="decimal" value="${data[i].yld}" placeholder="0.0%" onblur="applyYieldColor(${i}, 'yld')" oninput="storeRow(${i})"></td>
+                    <td><input type="text" id="scr-${i}" class="table-input" inputmode="decimal" value="${data[i].scr}" placeholder="0.0%" onblur="applyYieldColor(${i}, 'scr')" oninput="storeRow(${i})"></td>
                 `;
                 body.appendChild(tr);
                 updateToggleUI(i, 'q'); 
