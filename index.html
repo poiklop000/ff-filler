@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SHIFT MANAGER HUB MASTER CONSOLE</title>
+    <title>SHIFT MANAGER MASTER CONSOLE</title>
     <link rel="preconnect" href="https://googleapis.com">
     <link rel="preconnect" href="https://gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
         * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         
@@ -39,10 +40,14 @@
         .table-input { width: 90px; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 13px; font-weight: 600; color: #0f172a; font-family: inherit; box-sizing: border-box; }
         .table-text-area { width: 350px; min-height: 28px; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px; font-weight: 500; color: #334155; box-sizing: border-box; font-family: inherit; resize: none; overflow: hidden; display: block; line-height: 1.4; text-align: left; }
         
+        /* SKUs textarea styling */
+        .sku-textarea { width: 100%; max-width: 400px; min-height: 28px; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; font-weight: 500; color: #0f172a; text-align: left; font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; resize: none; overflow: hidden; display: block; line-height: 1.4; box-sizing: border-box; background-color: #f8fafc; }
+        
         /* === PRINT-ONLY SHADOW LAYERS === */
         /* Hidden on screen so the notes AND downtime logs do NOT echo below their textareas. */
         .print-notes-layer { display: none !important; }
         .print-shadow-layer { display: none !important; }
+        .print-sku-layer { display: none !important; }
         
         .oee-badge { font-weight: 700; font-size: 13px; color: #94a3b8; font-family: inherit; }
         .oee-badge.oee-pass { color: #166534; }
@@ -67,22 +72,18 @@
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             html, body { background-color: white !important; color: black !important; }
             body { font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; margin: 0 !important; padding: 0 !important; -webkit-font-smoothing: antialiased !important; }
-            .app-bar, .tab-container, .tab-btn, select, button.tab-btn, .footer { display: none !important; }
+            .app-bar, .tab-container, .tab-btn, .footer, button:not(.toggle-btn) { display: none !important; }
             .container { max-width: 100% !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
 
-            /* === PAGE LAYOUT: Table on page 1, Notes on page 2 === */
-            /* Keep the whole table together and prevent it from splitting across pages. */
-            .table-wrapper { page-break-after: always !important; page-break-inside: avoid !important; }
-            /* Force the Notes card to start on a fresh second page and stay intact. */
-            #notes-card { page-break-before: always !important; page-break-inside: avoid !important; }
+            /* Show everything without page breaks */
+            .card, .table-wrapper { page-break-inside: auto !important; }
             
-            .card { border: 1px solid #cbd5e1 !important; margin-bottom: 12px !important; padding: 12px !important; page-break-inside: avoid !important; background-color: white !important; }
+            .card { border: 1px solid #cbd5e1 !important; margin-bottom: 15px !important; padding: 12px !important; }
             .card-blue { background-color: #eff6ff !important; color: #1e40af !important; }
             .card-green { background-color: #f0fdf4 !important; color: #166534 !important; }
             .card-teal { background-color: #f0fdfa !important; color: #115e59 !important; }
             .card h3 { font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; font-weight: 700 !important; font-size: 14px !important; margin: 0 0 12px 0 !important; border-bottom: 1px solid currentColor !important; padding-bottom: 6px !important; text-transform: uppercase !important; letter-spacing: 0.3px !important; }
             .card-row { display: flex !important; justify-content: space-between !important; margin-bottom: 8px !important; font-size: 13px !important; font-weight: 500 !important; align-items: center !important; }
-            .card-value { font-weight: bold !important; font-size: 14px !important; }
             .card-date-input { border: none !important; background: transparent !important; font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; font-size: 13px !important; font-weight: 700 !important; color: #1e40af !important; width: auto !important; }
             
             .table-wrapper { border: none !important; overflow: visible !important; width: 100% !important; background-color: white !important; }
@@ -106,15 +107,28 @@
             .table-input.yield-input-red { color: #b91c1c !important; }
             .table-input.yield-input-green { color: #166534 !important; }
             .table-text-area { display: none !important; }
+            
+            /* SKUs textarea - hide, show shadow */
+            .sku-textarea { display: none !important; }
 
-            /* Print-only: Downtime Log shadow + Notes shadow become visible in export */
+            /* Print-only: Downtime Log shadow + Notes shadow + SKUs shadow become visible in export */
             .print-shadow-layer { display: block !important; width: 100% !important; text-align: left !important; font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; font-size: 11px !important; font-weight: 500 !important; color: #334155 !important; line-height: 1.4 !important; white-space: pre-wrap !important; word-wrap: break-word !important; padding: 6px 8px !important; box-sizing: border-box !important; }
 
             /* === PRINT MODE: show the notes shadow so notes appear in export === */
             .print-notes-layer { display: block !important; width: 100% !important; text-align: left !important; font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; font-size: 13px !important; font-weight: 500 !important; color: #0f172a !important; line-height: 1.4 !important; white-space: pre-wrap !important; word-wrap: break-word !important; padding: 6px 0 !important; box-sizing: border-box !important; }
 
+            /* Print SKUs shadow */
+            .print-sku-layer { display: block !important; width: 100% !important; text-align: left !important; font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; font-size: 13px !important; font-weight: 500 !important; color: #1e40af !important; line-height: 1.4 !important; white-space: pre-wrap !important; word-wrap: break-word !important; padding: 6px 0 !important; box-sizing: border-box !important; }
+            
+            /* Print styles for Shift Total Output and Average OEE - matching card colors */
+            #lbl-total-output { font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; font-weight: bold !important; font-size: 14px !important; color: #166534 !important; }
+            #lbl-avg-oee { font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; font-weight: bold !important; font-size: 14px !important; color: #115e59 !important; }
+            #lbl-total-output-inside { font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; font-weight: bold !important; font-size: 14px !important; color: #166534 !important; }
+            #lbl-avg-oee-inside { font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; font-weight: bold !important; font-size: 14px !important; color: #115e59 !important; }
+
             /* In print: hide the interactive Notes textarea itself (use shadow instead) */
             #tx-notes { display: none !important; }
+            #tx-sku { display: none !important; }
             
             .toggle-btn { display: inline-flex !important; border: 1px solid #cbd5e1 !important; font-size: 12px !important; width: 24px !important; height: 24px !important; border-radius: 50% !important; align-items: center !important; justify-content: center !important; font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; font-weight: 700 !important; }
             .toggle-btn.neutral { color: #94a3b8 !important; background-color: #f1f5f9 !important; border: 1px solid #cbd5e1 !important; }
@@ -178,14 +192,34 @@
         <!-- Hourly OEE Panel View -->
         <div id="view-tracker" style="display: none;">
             <div class="card card-blue">
-                <h3>Free-Flow Performance Board</h3>
-                <div class="card-row"><input type="date" id="tx-date" class="card-date-input" onchange="saveToStorage()"></div>
+                <h3 style="margin: 0; border: none; padding: 0; border-bottom: 1px solid currentColor; padding-bottom: 6px;">Free-Flow Performance Board</h3>
+                
+                <div class="card-row" style="margin-top: 12px;">
+                    <label style="font-size: 11px; font-weight: 700; color: #1e3a8a; text-transform: uppercase; letter-spacing: 0.3px;">SKU:</label>
+                    <input type="date" id="tx-date" class="card-date-input" style="font-size: 13px; font-weight: 700; color: #1e40af;" onchange="saveToStorage()">
+                </div>
+                
+                <textarea id="tx-sku" class="sku-textarea" rows="1" placeholder="Enter SKUs..." oninput="validateSKULength(this); saveSKU(); autoGrow(this)" maxlength="600"></textarea>
+                <div id="print-sku-shadow" class="print-sku-layer">-</div>
+
+
             </div>
 
             <div style="display: flex; justify-content: center; gap: 12px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
                 <select id="dr-shift" class="form-control" style="max-width: 160px; margin: 0;" onchange="switchShift()"><option value="Morning">Morning Shift</option><option value="Night">Night Shift</option></select>
                 <button class="tab-btn" style="background-color: #0d47a1; color: white;" onclick="window.print()">Print / Export Report</button>
+                <button class="tab-btn" style="background-color: #059669; color: white;" onclick="takeScreenshot()">📷 Screenshot</button>
                 <button class="tab-btn" style="background-color: #b91c1c; color: white;" onclick="clearCurrentShift()">Clear Shift Data</button>
+            </div>
+            
+            <!-- Summary Cards -->
+            <div style="display: flex; gap: 15px; margin-bottom: 15px; justify-content: center; flex-wrap: wrap;">
+                <div class="card card-green">
+                    <div class="card-row"><span>Shift Total Output:</span><span style="font-weight: bold; font-size: 14px; color: #166534;" id="lbl-total-output">0</span></div>
+                </div>
+                <div class="card card-teal">
+                    <div class="card-row"><span>Average OEE:</span><span style="font-weight: bold; font-size: 14px; color: #115e59;" id="lbl-avg-oee">0.00%</span></div>
+                </div>
             </div>
             
             <div class="table-wrapper">
@@ -215,7 +249,7 @@
             </div>
         </div>
         
-        <div class="footer">Shift Manager Console v1.00 - Created by <strong>Kelvin George</strong></div>
+        <div class="footer">Shift Manager Master Console v1.00 - Created by <strong>Kelvin George</strong></div>
     </div>
 
     <script>
@@ -230,6 +264,39 @@
             Night: Array.from({length: 12}, () => ({ out: "", spd: "", log: "", yld: "", scr: "", q: 0, s: 0 }))
         };
         let notes = { Morning: "", Night: "" };
+        let skuData = { Morning: "", Night: "" };
+
+        function validateSKULength(textarea) {
+            const lines = textarea.value.split('\n');
+            let cursorPosition = textarea.selectionStart;
+            let adjusted = false;
+            
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].length > 30) {
+                    lines[i] = lines[i].substring(0, 30);
+                    adjusted = true;
+                }
+            }
+            
+            if (adjusted) {
+                textarea.value = lines.join('\n');
+                // Restore cursor position
+                textarea.setSelectionRange(cursorPosition, cursorPosition);
+            }
+        }
+
+        function saveSKU() {
+            const el = document.getElementById("tx-sku");
+            if (el) skuData[currentShift] = el.value;
+            localStorage.setItem("canning_calc_sku", JSON.stringify(skuData));
+            syncSKUShadow();
+        }
+
+        function syncSKUShadow() {
+            const ta = document.getElementById("tx-sku");
+            const div = document.getElementById("print-sku-shadow");
+            if (ta && div) div.innerText = ta.value.trim() || "-";
+        }
 
         function saveNotes() {
             const el = document.getElementById("tx-notes");
@@ -247,6 +314,7 @@
         function saveToStorage() {
             localStorage.setItem("canning_calc_db", JSON.stringify(db));
             localStorage.setItem("canning_calc_notes", JSON.stringify(notes));
+            localStorage.setItem("canning_calc_sku", JSON.stringify(skuData));
             localStorage.setItem("canning_calc_shift", currentShift);
             const dateEl = document.getElementById("tx-date");
             if (dateEl) localStorage.setItem("canning_calc_tx-date", dateEl.value);
@@ -263,6 +331,8 @@
             if (savedDb) db = JSON.parse(savedDb);
             const savedNotes = localStorage.getItem("canning_calc_notes");
             if (savedNotes) notes = JSON.parse(savedNotes);
+            const savedSKU = localStorage.getItem("canning_calc_sku");
+            if (savedSKU) skuData = JSON.parse(savedSKU);
             const savedShift = localStorage.getItem("canning_calc_shift");
             if (savedShift) {
                 currentShift = savedShift;
@@ -291,6 +361,9 @@
 
             const notesEl = document.getElementById("tx-notes");
             if (notesEl) notesEl.value = notes[currentShift] || "";
+            
+            const skuEl = document.getElementById("tx-sku");
+            if (skuEl) skuEl.value = skuData[currentShift] || "";
         }
 
         function buildTable() {
@@ -330,13 +403,83 @@
                     applyYieldColor(i, 'yld');
                     applyYieldColor(i, 'scr');
                 }
+                // Auto-grow SKU textarea after it's loaded
+                const skuEl = document.getElementById("tx-sku");
+                if (skuEl && skuEl.value) {
+                    autoGrow(skuEl);
+                }
+                // Auto-grow Notes textarea after it's loaded
+                const notesEl = document.getElementById("tx-notes");
+                if (notesEl && notesEl.value) {
+                    autoGrow(notesEl);
+                }
             }, 50);
 
             setupFocusChain();
             const notesEl = document.getElementById("tx-notes");
-            if (notesEl) { notesEl.value = notes[currentShift] || ""; autoGrow(notesEl); }
+            if (notesEl) { notesEl.value = notes[currentShift] || ""; }
+            const skuEl = document.getElementById("tx-sku");
+            if (skuEl) { skuEl.value = skuData[currentShift] || ""; }
             syncNotesShadow();
+            syncSKUShadow();
             calculateMetrics();
+            calculateTotals();
+        }
+
+        function calculateTotals() {
+            let totalOutput = 0;
+            let totalOEE = 0;
+            let oeeCount = 0;
+
+            for (let i = 0; i < 12; i++) {
+                const rowOut = parseNum(db[currentShift][i].out);
+                const rowSpd = parseNum(db[currentShift][i].spd);
+                totalOutput += rowOut;
+                
+                if (rowOut > 0 && rowSpd > 0) {
+                    const oee = (rowOut / rowSpd) * 100;
+                    totalOEE += oee;
+                    oeeCount++;
+                }
+            }
+
+            // Update Shift Total Output (both separate card and inside Performance Board)
+            const totalOutputEl = document.getElementById("lbl-total-output");
+            if (totalOutputEl) {
+                totalOutputEl.innerHTML = totalOutput.toLocaleString();
+                totalOutputEl.style.color = "#166534"; // Green color matching card
+            }
+            
+            const totalOutputInsideEl = document.getElementById("lbl-total-output-inside");
+            if (totalOutputInsideEl) {
+                totalOutputInsideEl.innerHTML = totalOutput.toLocaleString();
+                totalOutputInsideEl.style.color = "#166534"; // Green color
+            }
+
+            // Update Average OEE (both separate card and inside Performance Board)
+            const avgOeeEl = document.getElementById("lbl-avg-oee");
+            if (avgOeeEl) {
+                if (oeeCount > 0) {
+                    const avgOEE = totalOEE / oeeCount;
+                    avgOeeEl.innerHTML = avgOEE.toFixed(2) + "%";
+                    avgOeeEl.style.color = "#115e59"; // Teal color matching card
+                } else {
+                    avgOeeEl.innerHTML = "0.00%";
+                    avgOeeEl.style.color = "#115e59"; // Teal color
+                }
+            }
+            
+            const avgOeeInsideEl = document.getElementById("lbl-avg-oee-inside");
+            if (avgOeeInsideEl) {
+                if (oeeCount > 0) {
+                    const avgOEE = totalOEE / oeeCount;
+                    avgOeeInsideEl.innerHTML = avgOEE.toFixed(2) + "%";
+                    avgOeeInsideEl.style.color = "#115e59"; // Teal color
+                } else {
+                    avgOeeInsideEl.innerHTML = "0.00%";
+                    avgOeeInsideEl.style.color = "#115e59"; // Teal color
+                }
+            }
         }
 
         function syncPrintShadow(i) {
@@ -358,6 +501,7 @@
             db[currentShift][i].scr = document.getElementById(`scr-${i}`).value;
             saveToStorage();
             calculateMetrics();
+            calculateTotals();
         }
 
         function applyYieldColor(i, field) {
@@ -456,6 +600,7 @@
                         applyYieldColor(i, 'yld');
                         applyYieldColor(i, 'scr');
                     }
+                    calculateTotals();
                 }, 50);
             }
         }
@@ -463,11 +608,17 @@
         function switchShift() {
             const notesEl = document.getElementById("tx-notes");
             if (notesEl) notes[currentShift] = notesEl.value;
+            
+            const skuEl = document.getElementById("tx-sku");
+            if (skuEl) skuData[currentShift] = skuEl.value;
+            
             currentShift = document.getElementById("dr-shift").value;
             saveToStorage();
             buildTable();
             const newNotesEl = document.getElementById("tx-notes");
             if (newNotesEl) { newNotesEl.value = notes[currentShift] || ""; autoGrow(newNotesEl); }
+            const newSkuEl = document.getElementById("tx-sku");
+            if (newSkuEl) { newSkuEl.value = skuData[currentShift] || ""; autoGrow(newSkuEl); }
         }
 
         function clearCalculatorInputs() {
@@ -496,6 +647,7 @@
             anchors[currentShift] = new Date();
             db[currentShift] = Array.from({length: 12}, () => ({ out: "", spd: "", log: "", yld: "", scr: "", q: 0, s: 0 }));
             notes[currentShift] = "";
+            skuData[currentShift] = "";
             saveToStorage();
             buildTable();
         }
@@ -611,11 +763,60 @@
             });
         }
 
-        /* === MULTI-PAGE PRINT LAYOUT ===
-           Printing is handled by CSS page-break rules in @media print:
-             - The whole hourly table stays together on page 1.
-             - The Notes card is forced onto page 2 via page-break-before.
-           No JavaScript scaling is needed, so all data prints in full. */
+        function takeScreenshot() {
+            const element = document.getElementById("view-tracker");
+            
+            // Ensure html2canvas is loaded
+            if (typeof html2canvas === 'undefined') {
+                alert('html2canvas library not loaded. Please wait a moment and try again.');
+                return;
+            }
+            
+            // Temporarily add URL to footer for screenshot
+            const footer = document.querySelector('.footer');
+            const currentFooterText = footer.innerHTML;
+            const urlText = ` | URL: ${window.location.href}`;
+            footer.innerHTML = currentFooterText + urlText;
+            
+            // Show loading state
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⏳ Capturing...';
+            btn.disabled = true;
+            
+            // Capture the element with high fidelity
+            html2canvas(element, {
+                backgroundColor: '#f8fafc',
+                scale: 2, // Using 2 for better compatibility
+                logging: false,
+                useCORS: true,
+                allowTaint: true,
+                logging: true,
+            }).then(function(canvas) {
+                // Restore footer
+                footer.innerHTML = currentFooterText;
+                
+                // Create download link
+                const link = document.createElement('a');
+                link.download = `Shift_Report_${currentShift}_${new Date().toISOString().split('T')[0]}.png`;
+                link.href = canvas.toDataURL('image/png', 1.0);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Restore button
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }).catch(function(err) {
+                // Restore footer even on error
+                footer.innerHTML = currentFooterText;
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                
+                console.error('Screenshot error:', err);
+                alert('Screenshot failed. Please try:\n1. Using Print/Export Report (PDF)\n2. Taking a manual screenshot\n\nError: ' + err.message);
+            });
+        }
 
         window.onload = function() {
             loadFromStorage();
