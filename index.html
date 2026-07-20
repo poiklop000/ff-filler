@@ -45,6 +45,9 @@
         .print-shadow-layer { display: none !important; }
         
         .oee-badge { font-weight: 700; font-size: 13px; color: #94a3b8; font-family: inherit; }
+        .oee-badge.oee-pass { color: #166534; }
+        .oee-badge.oee-fail { color: #b91c1c; }
+        .oee-badge.oee-neutral { color: #94a3b8; }
         
         .toggle-btn { background: none; border: none; font-size: 12px; cursor: pointer; padding: 0; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; transition: all 0.15s; font-family: inherit; }
         .toggle-btn.neutral { color: #94a3b8; background-color: #f1f5f9; border: 1px solid #cbd5e1; }
@@ -118,7 +121,10 @@
             .toggle-btn.pass { color: white !important; background-color: #166534 !important; border: 1px solid #166534 !important; }
             .toggle-btn.issue { color: white !important; background-color: #b91c1c !important; border: 1px solid #b91c1c !important; }
             
-            .oee-badge { font-weight: 700 !important; font-size: 13px !important; font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; color: #94a3b8 !important; }
+            .oee-badge { font-weight: 700 !important; font-size: 13px !important; font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; }
+            .oee-badge.oee-pass { color: #166534 !important; }
+            .oee-badge.oee-fail { color: #b91c1c !important; }
+            .oee-badge.oee-neutral { color: #94a3b8 !important; }
         }
     </style>
 <script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
@@ -560,8 +566,15 @@
                     if (rowOut > 0 && rowSpd > 0) {
                         const oee = (rowOut / rowSpd) * 100;
                         oeeEl.innerHTML = oee.toFixed(2) + "%";
-                        oeeEl.style.color = oee >= 70 ? "#166534" : "#b91c1c";
-                    } else { oeeEl.innerHTML = "0.00%"; oeeEl.style.color = "#94a3b8"; }
+                        /* Use classes (not inline style) so the print CSS !important
+                           rules keep the green/red coloring in the exported report. */
+                        oeeEl.classList.remove('oee-neutral', 'oee-pass', 'oee-fail');
+                        oeeEl.classList.add(oee >= 70 ? 'oee-pass' : 'oee-fail');
+                    } else {
+                        oeeEl.innerHTML = "0.00%";
+                        oeeEl.classList.remove('oee-neutral', 'oee-pass', 'oee-fail');
+                        oeeEl.classList.add('oee-neutral');
+                    }
                 }
             }
             saveToStorage();
