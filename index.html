@@ -140,6 +140,7 @@
                 <div class="input-group"><label>Filler bowl level</label><input type="number" id="tx-bowl" class="form-control" inputmode="decimal" placeholder="0" oninput="calculateMetrics()"></div>
                 <div class="input-group"><label>Cans per layer</label><input type="number" id="tx-layer" class="form-control" inputmode="numeric" placeholder="0" oninput="calculateMetrics()"></div>
                 <div class="input-group"><label>Layers per pallet</label><input type="number" id="tx-pallet" class="form-control" inputmode="numeric" placeholder="0" oninput="calculateMetrics()"></div>
+                <button class="tab-btn" style="background-color: #b91c1c; color: white; margin-top: 8px;" onclick="clearCalculatorInputs()">Clear Calculator</button>
             </div>
 
             <div class="card card-teal">
@@ -405,6 +406,22 @@
             currentShift = document.getElementById("dr-shift").value;
             saveToStorage();
             buildTable();
+        }
+
+        function clearCalculatorInputs() {
+            document.getElementById("tx-product").value = "";
+            document.getElementById("dr-size").value = "";
+            document.getElementById("tx-plan").value = "";
+            document.getElementById("tx-speed").value = "";
+            document.getElementById("tx-uvol").value = "";
+            document.getElementById("tx-mvol").value = "";
+            document.getElementById("tx-ratio").value = "";
+            document.getElementById("tx-counter").value = "";
+            document.getElementById("tx-bowl").value = "";
+            document.getElementById("tx-layer").value = "";
+            document.getElementById("tx-pallet").value = "";
+            saveToStorage();
+            calculateMetrics();
         }
 
         // FIXED: Embedded native verification popup intercepts data wipes, protecting inputs from accidental touches
