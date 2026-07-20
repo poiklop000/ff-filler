@@ -362,21 +362,103 @@
 
         function setupFocusChain() {
             for (let i = 0; i < 12; i++) {
-                setupSubmit(document.getElementById(`spd-${i}`), `out-${i}`);
-                setupSubmit(document.getElementById(`out-${i}`), `log-${i}`);
-                setupSubmit(document.getElementById(`log-${i}`), `yld-${i}`);
-                setupSubmit(document.getElementById(`yld-${i}`), `scr-${i}`);
-                if (i < 11) setupSubmit(document.getElementById(`scr-${i}`), `spd-${i+1}`);
-                else setupSubmit(document.getElementById(`scr-${i}`), "tx-product");
-            }
-        }
+                const spdEl = document.getElementById(`spd-${i}`);
+                const outEl = document.getElementById(`out-${i}`);
+                const logEl = document.getElementById(`log-${i}`);
+                const yldEl = document.getElementById(`yld-${i}`);
+                const scrEl = document.getElementById(`scr-${i}`);
 
-        function setupSubmit(el, nextId) {
-            if (!el) return;
-            el.addEventListener("keypress", function(e) {
-                if (e.key === "Enter") { e.preventDefault(); document.getElementById(nextId)?.focus(); }
-            });
-            el.addEventListener("focus", function() { setTimeout(() => this.select(), 50); });
+                // Rated Speed -> Actual Output
+                if (spdEl) {
+                    spdEl.addEventListener("keypress", (e) => {
+                        if (e.key === "Enter") { e.preventDefault(); outEl?.focus(); }
+                    });
+                    spdEl.addEventListener("blur", () => {
+                        setTimeout(() => {
+                            if (document.activeElement === spdEl) return;
+                            const nextEl = outEl;
+                            if (nextEl && nextEl !== document.activeElement) {
+                                nextEl.focus();
+                            }
+                        }, 50);
+                    });
+                    spdEl.addEventListener("focus", function() { setTimeout(() => this.select(), 50); });
+                }
+
+                // Actual Output -> Downtime Log
+                if (outEl) {
+                    outEl.addEventListener("keypress", (e) => {
+                        if (e.key === "Enter") { e.preventDefault(); logEl?.focus(); }
+                    });
+                    outEl.addEventListener("blur", () => {
+                        setTimeout(() => {
+                            if (document.activeElement === outEl) return;
+                            const nextEl = logEl;
+                            if (nextEl && nextEl !== document.activeElement) {
+                                nextEl.focus();
+                            }
+                        }, 50);
+                    });
+                    outEl.addEventListener("focus", function() { setTimeout(() => this.select(), 50); });
+                }
+
+                // Downtime Log -> Yield
+                if (logEl) {
+                    logEl.addEventListener("keypress", (e) => {
+                        if (e.key === "Enter") { e.preventDefault(); yldEl?.focus(); }
+                    });
+                    logEl.addEventListener("blur", () => {
+                        setTimeout(() => {
+                            if (document.activeElement === logEl) return;
+                            const nextEl = yldEl;
+                            if (nextEl && nextEl !== document.activeElement) {
+                                nextEl.focus();
+                            }
+                        }, 50);
+                    });
+                }
+
+                // Yield -> Scrap
+                if (yldEl) {
+                    yldEl.addEventListener("keypress", (e) => {
+                        if (e.key === "Enter") { e.preventDefault(); scrEl?.focus(); }
+                    });
+                    yldEl.addEventListener("blur", () => {
+                        setTimeout(() => {
+                            if (document.activeElement === yldEl) return;
+                            const nextEl = scrEl;
+                            if (nextEl && nextEl !== document.activeElement) {
+                                nextEl.focus();
+                            }
+                        }, 50);
+                    });
+                    yldEl.addEventListener("focus", function() { setTimeout(() => this.select(), 50); });
+                }
+
+                // Scrap -> Next row or back to product
+                if (scrEl) {
+                    scrEl.addEventListener("keypress", (e) => {
+                        if (e.key === "Enter") {
+                            e.preventDefault();
+                            if (i < 11) {
+                                document.getElementById(`spd-${i+1}`)?.focus();
+                            } else {
+                                document.getElementById("tx-product")?.focus();
+                            }
+                        }
+                    });
+                    scrEl.addEventListener("blur", () => {
+                        setTimeout(() => {
+                            if (document.activeElement === scrEl) return;
+                            const nextEl = i < 11 ? document.getElementById(`spd-${i+1}`) : document.getElementById("tx-product");
+                            if (nextEl && nextEl !== document.activeElement) {
+                                nextEl.focus();
+                            }
+                        }, 50);
+                    });
+                    scrEl.addEventListener("focus", function() { setTimeout(() => this.select(), 50); });
+                }
+            }
         }
 
         function switchView(isCalc) {
