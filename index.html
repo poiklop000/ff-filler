@@ -407,7 +407,21 @@
             saveToStorage();
             buildTable();
         }
-
+        function clearCalculatorInputs() {
+            document.getElementById("tx-product").value = "";
+            document.getElementById("dr-size").value = "";
+            document.getElementById("tx-plan").value = "";
+            document.getElementById("tx-speed").value = "";
+            document.getElementById("tx-uvol").value = "";
+            document.getElementById("tx-mvol").value = "";
+            document.getElementById("tx-ratio").value = "";
+            document.getElementById("tx-counter").value = "";
+            document.getElementById("tx-bowl").value = "";
+            document.getElementById("tx-layer").value = "";
+            document.getElementById("tx-pallet").value = "";
+            saveToStorage();
+            calculateMetrics();
+        }
         // FIXED: Embedded native verification popup intercepts data wipes, protecting inputs from accidental touches
         function clearCurrentShift() {
             const confirmed = confirm("WARNING: You are about to completely delete all data entered for this shift. Do you want to proceed?");
