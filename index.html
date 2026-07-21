@@ -7,7 +7,6 @@
     <link rel="preconnect" href="https://googleapis.com">
     <link rel="preconnect" href="https://gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
         * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         
@@ -88,6 +87,8 @@
             
             .table-wrapper { border: none !important; overflow: visible !important; width: 100% !important; background-color: white !important; }
             table { width: 100% !important; border-collapse: collapse !important; table-layout: fixed !important; page-break-inside: auto !important; }
+            thead { display: table-header-group !important; }
+            thead tr { display: table-row !important; page-break-inside: avoid !important; page-break-after: auto !important; }
             tr { page-break-inside: avoid !important; page-break-after: auto !important; }
             
             th:nth-child(1), td:nth-child(1) { width: 110px !important; text-align: left !important; }
@@ -178,6 +179,7 @@
                 <div class="input-group"><label>Filler bowl level</label><input type="number" id="tx-bowl" class="form-control" inputmode="decimal" placeholder="0" oninput="calculateMetrics()"></div>
                 <div class="input-group"><label>Cans per layer</label><input type="number" id="tx-layer" class="form-control" inputmode="numeric" placeholder="0" oninput="calculateMetrics()"></div>
                 <div class="input-group"><label>Layers per pallet</label><input type="number" id="tx-pallet" class="form-control" inputmode="numeric" placeholder="0" oninput="calculateMetrics()"></div>
+                <button class="tab-btn" style="background-color: #0d47a1; color: white; margin-top: 8px;" onclick="updatePage()">Update</button>
                 <button class="tab-btn" style="background-color: #b91c1c; color: white; margin-top: 8px;" onclick="clearCalculatorInputs()">Clear Calculator</button>
             </div>
 
@@ -208,7 +210,6 @@
             <div style="display: flex; justify-content: center; gap: 12px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
                 <select id="dr-shift" class="form-control" style="max-width: 160px; margin: 0;" onchange="switchShift()"><option value="Morning">Morning Shift</option><option value="Night">Night Shift</option></select>
                 <button class="tab-btn" style="background-color: #0d47a1; color: white;" onclick="window.print()">Print / Export Report</button>
-                <button class="tab-btn" style="background-color: #059669; color: white;" onclick="takeScreenshot()">📷 Screenshot</button>
                 <button class="tab-btn" style="background-color: #b91c1c; color: white;" onclick="clearCurrentShift()">Clear Shift Data</button>
             </div>
             
@@ -640,6 +641,11 @@
             calculateMetrics();
         }
 
+        function updatePage() {
+            saveToStorage();
+            window.location.reload();
+        }
+
         function clearCurrentShift() {
             const confirmed = confirm("WARNING: You are about to completely delete all data entered for this shift. Do you want to proceed?");
             if (!confirmed) return;
@@ -760,61 +766,6 @@
                     if (e.key === "Enter") { e.preventDefault(); const n = document.getElementById(nextId); if (n) n.focus(); }
                 });
                 el.addEventListener("focus", function() { setTimeout(() => this.select(), 50); });
-            });
-        }
-
-        function takeScreenshot() {
-            const element = document.getElementById("view-tracker");
-            
-            // Ensure html2canvas is loaded
-            if (typeof html2canvas === 'undefined') {
-                alert('html2canvas library not loaded. Please wait a moment and try again.');
-                return;
-            }
-            
-            // Temporarily add URL to footer for screenshot
-            const footer = document.querySelector('.footer');
-            const currentFooterText = footer.innerHTML;
-            const urlText = ` | URL: ${window.location.href}`;
-            footer.innerHTML = currentFooterText + urlText;
-            
-            // Show loading state
-            const btn = event.target;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '⏳ Capturing...';
-            btn.disabled = true;
-            
-            // Capture the element with high fidelity
-            html2canvas(element, {
-                backgroundColor: '#f8fafc',
-                scale: 2, // Using 2 for better compatibility
-                logging: false,
-                useCORS: true,
-                allowTaint: true,
-                logging: true,
-            }).then(function(canvas) {
-                // Restore footer
-                footer.innerHTML = currentFooterText;
-                
-                // Create download link
-                const link = document.createElement('a');
-                link.download = `Shift_Report_${currentShift}_${new Date().toISOString().split('T')[0]}.png`;
-                link.href = canvas.toDataURL('image/png', 1.0);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                // Restore button
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }).catch(function(err) {
-                // Restore footer even on error
-                footer.innerHTML = currentFooterText;
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-                
-                console.error('Screenshot error:', err);
-                alert('Screenshot failed. Please try:\n1. Using Print/Export Report (PDF)\n2. Taking a manual screenshot\n\nError: ' + err.message);
             });
         }
 
